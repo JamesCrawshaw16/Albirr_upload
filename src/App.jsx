@@ -1,4 +1,4 @@
-import { Component, useEffect, useState } from "react";
+import { Component, useEffect, useRef, useState } from "react";
 import { IdValidation } from "idmission-web-sdk";
 
 const LOGO_URL =
@@ -96,8 +96,34 @@ const sdkClassNames = {
   },
 };
 
+function useStaffWording(containerRef, refreshKey) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return undefined;
+    const replaceWording = () => {
+      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+      let node = walker.nextNode();
+      while (node) {
+        const revised = node.nodeValue
+          ?.replaceAll("Checking your ID…", "Checking the ID…")
+          .replaceAll("Checking your ID...", "Checking the ID...");
+        if (revised && revised !== node.nodeValue) node.nodeValue = revised;
+        node = walker.nextNode();
+      }
+    };
+    replaceWording();
+    const observer = new MutationObserver(replaceWording);
+    observer.observe(container, { childList: true, subtree: true, characterData: true });
+    return () => observer.disconnect();
+  }, [containerRef, refreshKey]);
+}
+
 export default function App() {
   const [unlocked, setUnlocked] = useState(null);
+  const [completed, setCompleted] = useState(false);
+  const [journeyKey, setJourneyKey] = useState(0);
+  const sdkContainerRef = useRef(null);
+  useStaffWording(sdkContainerRef, `${unlocked}-${completed}-${journeyKey}`);
   useEffect(() => {
     fetch("/api/access-status", { cache: "no-store" })
       .then((response) => response.json())
@@ -128,12 +154,29 @@ export default function App() {
             <div className="powered-logos"><img src="/brands/transunion.png" alt="TransUnion" /><span aria-hidden="true">+</span><img src="/brands/idmission.png" alt="IDMission" /></div>
           </div>
         </aside>
-        <section className="sdk-card" aria-label="Document upload journey">
-          <PortalErrorBoundary>
-            <IdValidation sessionId={getSessionId} allowUploadingDocumentsFromStorage={true}
-              geolocationEnabled={false} geolocationRequired={false} debugMode={false}
-              theme={sdkTheme} classNames={sdkClassNames} />
-          </PortalErrorBoundary>
+        <section ref={sdkContainerRef} className="sdk-card" aria-label="Document upload journey">
+          {completed ? (
+            <div className="complete-panel" role="status">
+              <div className="complete-tick" aria-hidden="true">✓</div>
+              <p className="eyebrow">Upload complete</p>
+              <h2>The document has been submitted</h2>
+              <p>Open the IDMission Identity Portal to review the result, or start another upload.</p>
+              <div className="complete-actions">
+                <button type="button" onClick={() => { setJourneyKey((value) => value + 1); setCompleted(false); }}>
+                  Upload another document
+                </button>
+                <a href={PORTAL_URL} target="_blank" rel="noreferrer">Review in IDMission <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+          ) : (
+            <PortalErrorBoundary key={journeyKey}>
+              <IdValidation key={journeyKey} sessionId={getSessionId} allowUploadingDocumentsFromStorage={true}
+                geolocationEnabled={false} geolocationRequired={false} debugMode={false}
+                modelLoadTimeoutMs={1800000} skipSuccessScreen={true}
+                onComplete={() => setCompleted(true)}
+                theme={sdkTheme} classNames={sdkClassNames} />
+            </PortalErrorBoundary>
+          )}
         </section>
       </main>
       <footer>
