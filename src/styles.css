@@ -1,0 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@500;600&display=swap");
+
+:root {
+  font-family: "Lato", Arial, sans-serif;
+  color: #212121;
+  background: #f5f7f5;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, input, select { font: inherit; }
+
+.app-shell { min-height: 100vh; display: flex; flex-direction: column; }
+.site-header {
+  min-height: 90px;
+  padding: 16px clamp(20px, 5vw, 72px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  background: #fff;
+  border-bottom: 1px solid #e0e5e1;
+}
+.site-header img { display: block; width: min(270px, 56vw); max-height: 58px; object-fit: contain; object-position: left center; }
+.site-header span { font-size: 0.9rem; font-weight: 700; color: #4c5750; }
+
+main { width: min(1040px, calc(100% - 32px)); margin: 0 auto; padding: 52px 0 64px; flex: 1; }
+.intro { max-width: 720px; margin-bottom: 28px; }
+.eyebrow { margin: 0 0 9px; color: #167d3a; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.82rem; }
+h1, h2 { font-family: "Montserrat", Arial, sans-serif; }
+h1 { margin: 0; font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.08; font-weight: 600; letter-spacing: -0.03em; }
+.intro > p:last-child { margin: 18px 0 0; color: #536057; font-size: 1.08rem; line-height: 1.6; }
+
+.sdk-card { min-height: 430px; padding: clamp(18px, 4vw, 42px); background: #fff; border: 1px solid #dce3dd; border-top: 5px solid #1fa44e; box-shadow: 0 18px 48px rgba(18, 47, 28, 0.08); }
+.sdk-card button, .notice button { min-height: 48px; border: 0; border-radius: 3px; background: #1fa44e; color: #fff; font-weight: 700; cursor: pointer; }
+.sdk-card button:hover, .notice button:hover { background: #167d3a; }
+.sdk-card button:focus-visible, .notice button:focus-visible { outline: 3px solid #212121; outline-offset: 3px; }
+.notice { padding: 30px; border-left: 5px solid #1fa44e; background: #f0f8f3; }
+.notice-error { border-color: #b42318; background: #fff3f2; }
+.notice h2 { margin-top: 0; }
+.notice button { padding: 0 22px; }
+
+footer { padding: 24px clamp(20px, 5vw, 72px); display: flex; gap: 18px 38px; justify-content: space-between; background: #212121; color: #fff; font-size: 0.8rem; line-height: 1.45; }
+footer span:last-child { max-width: 720px; color: #d8ddda; text-align: right; }
+
+@media (max-width: 650px) {
+  .site-header { min-height: 76px; }
+  .site-header span { display: none; }
+  main { width: min(100% - 24px, 1040px); padding: 34px 0 42px; }
+  .sdk-card { padding: 14px; }
+  footer { flex-direction: column; }
+  footer span:last-child { text-align: left; }
+}
