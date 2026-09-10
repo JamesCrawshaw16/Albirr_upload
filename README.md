@@ -8,8 +8,9 @@ Add these server-side environment variables to Development, Preview and Producti
 
 - `IDMISSION_API_KEY_ID`
 - `IDMISSION_API_KEY_SECRET`
+- `PORTAL_ACCESS_PIN` (the shared alphanumeric staff access PIN)
 
-Do not prefix either variable with `VITE_`; that would expose it to the browser.
+Do not prefix any of these variables with `VITE_`; that would expose them to the browser. The PIN is checked by a server-side function and the browser receives only a temporary secure cookie.
 
 ## Local development
 

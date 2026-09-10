@@ -1,3 +1,5 @@
+import { isAuthorized } from "./_auth.js";
+
 const SESSION_URL =
   "https://portal-api.idmission.com/portal.sessions.v1.SessionsService/CreateSession";
 
@@ -5,6 +7,10 @@ export default async function handler(request, response) {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
     return response.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (!isAuthorized(request)) {
+    return response.status(401).json({ error: "Please enter the staff access PIN." });
   }
 
   try {
